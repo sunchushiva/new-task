@@ -5,32 +5,18 @@ import { categoryId, CategorySelectorProps } from "@/utils/index";
 export default function Category({
   options,
   defaultSelected,
-  paramName = "category",
+  paramName,
   onChange,
   setCategory,
 }: CategorySelectorProps) {
-  // Checking for the value for the category from the URL
+  // Getting the value of category from the URL
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
-  const urlCategory = searchParams.get(paramName);
-  const initialCategory = options.some((opt) => opt.id === urlCategory)
-    ? urlCategory
-    : defaultSelected;
 
   // Declaring states
-  const [activeTab, setActiveTab] = useState(initialCategory);
+  const [activeTab, setActiveTab] = useState<categoryId>(defaultSelected);
   const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
-
-  useEffect(() => {
-    if (!urlCategory || !options.some((opt) => opt.id === urlCategory)) {
-      // Checking if the category is valid or not
-      setCategory(initialCategory as categoryId);
-      params.set(paramName, initialCategory as categoryId);
-      router.push(`?${params.toString()}`, { scroll: false });
-    }
-    setCategory(urlCategory as categoryId);
-  }, [paramName]);
 
   useEffect(() => {
     options.forEach((option) => {

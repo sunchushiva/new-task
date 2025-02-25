@@ -8,6 +8,7 @@ import { fetchRegions, fetchListings, filterListings } from "@/helper";
 import { Listing, categoryId, typeId } from "@/utils/index";
 import Listings from "@/components/Listings";
 import { FaHotel, FaHome, FaHouseUser, FaClock, FaUsers } from "react-icons/fa";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const categories = [
   { id: "shared-stays", label: "Shared stays" },
@@ -24,15 +25,44 @@ const propertyTypes = [
   { id: "roommates", label: "Roommates", icon: <FaUsers /> },
 ];
 
-const defaultCategory = categories[0].id;
-const defaultType = propertyTypes[0].id;
-
 export default function Home() {
   const [regions, setRegions] = useState<string[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
-  const [category, setCategory] = useState<categoryId>(defaultCategory);
   const [reservedListings, setReservedListings] = useState<Listing[]>([]);
-  const [type, setType] = useState<typeId>(defaultType);
+
+  // Handling URL search params
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const params = new URLSearchParams(searchParams.toString());
+
+  // Category URL
+  const urlCategory = searchParams.get("category");
+  const initialCategory = urlCategory ?? categories[0].id;
+  const [category, setCategory] = useState(initialCategory);
+  useEffect(() => {
+    if (!urlCategory || !categories.some((opt) => opt.id === urlCategory)) {
+      // Checking if the category is valid or not
+      params.set("category", initialCategory as categoryId);
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+    setCategory(initialCategory as categoryId);
+  }, []);
+
+  // Type URL
+  const urlPropertyType = searchParams.get("type");
+  const initialPropertyType = urlPropertyType ?? propertyTypes[0].id;
+  const [type, setType] = useState(initialPropertyType);
+  useEffect(() => {
+    if (
+      !urlPropertyType ||
+      !propertyTypes.some((p) => p.id === urlPropertyType)
+    ) {
+      // Checking if the type is valid or not
+      params.set("type", initialPropertyType as typeId);
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+    setType(initialPropertyType as typeId);
+  }, []);
 
   useEffect(() => {
     fetchRegions().then((res) => {
@@ -72,6 +102,7 @@ export default function Home() {
           defaultSelected={category}
           onChange={categoryClickHandler}
           setCategory={setCategory}
+          paramName="category"
         />
 
         {/* Search Container which includes region, date range, guests, expenditure  */}

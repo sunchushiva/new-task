@@ -13,7 +13,7 @@ export type categoryId = CategoryOption["id"];
 export interface CategorySelectorProps {
   options: CategoryOption[];
   defaultSelected: string;
-  paramName?: string;
+  paramName: string;
   onChange: (selectedId: categoryId) => void;
   setCategory: Dispatch<SetStateAction<string>>;
 }

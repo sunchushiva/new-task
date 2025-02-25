@@ -49,8 +49,6 @@ export const filterListings = (
 ): Listing[] => {
   let result = listings.filter((listing) => listing.type === type);
 
-  console.log(type, result, listings);
-
   if (type === "any") {
     return listings;
   }
