@@ -22,12 +22,6 @@ export const SearchContainer = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
-  const urlPropertyType = searchParams.get("type");
-  const initialPropertyType = propertyTypes.some(
-    (p) => p.id === urlPropertyType
-  )
-    ? urlPropertyType
-    : defaultSelected;
 
   // Declaring states
   const [search, setSearch] = useState<typeId>(defaultSelected);
@@ -38,25 +32,11 @@ export const SearchContainer = ({
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
 
-  useEffect(() => {
-    if (
-      !urlPropertyType ||
-      !propertyTypes.some((p) => p.id === urlPropertyType)
-    ) {
-      // Checking if the type is valid or not
-      params.set("type", initialPropertyType as typeId);
-    }
-    router.push(`?${params.toString()}`, { scroll: false });
-    setType(initialPropertyType as typeId);
-    setSearch(initialPropertyType as typeId);
-  }, []);
-
   const updateSearchParams = (type: typeId) => {
     setSearch(type);
     onChange(type);
     setType(type as typeId);
 
-    const params = new URLSearchParams(searchParams.toString());
     params.set("type", type);
     router.push(`?${params.toString()}`, { scroll: false });
   };
